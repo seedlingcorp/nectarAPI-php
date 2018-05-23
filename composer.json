@@ -1,5 +1,5 @@
 {
-    "name": "Seedling/NectarAPI",
+    "name": "Seedling/nectar-php-api",
     "description": "The PHP API Library for Nectar",
     "keywords": ["library", "Nectar"],
     "license": "MIT",
