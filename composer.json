@@ -3,7 +3,7 @@
     "description": "The PHP API Library for Nectar",
     "keywords": ["library", "Nectar"],
     "license": "MIT",
-    "type": "project",
+    "type": "library",
     "require": {
         "php": ">=5.4"
     },
