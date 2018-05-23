@@ -1,0 +1,19 @@
+{
+    "name": "Seedling/NectarAPI",
+    "description": "The PHP API Library for Nectar",
+    "keywords": ["library", "Nectar"],
+    "license": "MIT",
+    "type": "project",
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+
+    },
+    "authors": [
+        {
+            "name": "Brandon Moore",
+            "email": "brandon@nectar.itulstaging.com"
+        }
+    ]
+}
