@@ -2,11 +2,9 @@
 	
 	namespace Nectar\Model;
 
-	class ApiToken extends \Nectar\Core\NectarModel{
+	class Email extends \Nectar\Core\NectarModel{
 
 		public function __construct($data = []){
 			parent::__construct($data);
-
-			return $this;
 		}
 	}

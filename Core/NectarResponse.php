@@ -52,6 +52,7 @@
 							$this->results = $this->results->push($data->results)->first();
 						}
 						else{
+
 							foreach($data->results as $k => $v) $this->results->push($v);
 						}
 					}

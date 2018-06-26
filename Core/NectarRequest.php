@@ -9,7 +9,7 @@
 		}
 
 		private function url($path){
-			return $this->config()->url($path);
+			return rtrim($this->config()->url($path), '/');
 		}
 
 		private function isEncodedUrlData($url){
@@ -35,10 +35,15 @@
 			$res = curl_exec($ch);
 			curl_close($ch);
 
+			if(!json_decode($res)){
+				pr($this->url($url));
+				pr($res);
+			}
+
 			return $this->parseResponse($res, $callback, $encoded);
 		}
 
-		public function post($url, $data = [], $callback = null){
+		public function post($url, $data = [], $callback = null, $debug = false){
 
 			$encoded = false;
 			if($this->isEncodedUrlData($url)){
@@ -55,6 +60,20 @@
 			$res = curl_exec($ch);
 			curl_close($ch);
 
+			
+
+			//if($debug){
+				//error_reporting(E_ALL);
+			
+				if(!json_decode($res)){
+					pr($res);
+				}
+			//}
+
+			
+			
+			
+
 			return $this->parseResponse($res, $callback, $encoded);
 		}
 
@@ -66,15 +85,26 @@
 
 		}
 
-		private function loadCurl(){
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			if($this->config()->tokenHeader()) curl_setopt($ch, CURLOPT_HTTPHEADER, [$this->config()->tokenHeader()]);
+		private function getHeaders($ch){
+			$headers = [];
+
+			if($this->config()->tokenHeader()) $headers[] = $this->config()->tokenHeader();
+			if($this->config()->memberTokenHeader()) $headers[] = $this->config()->memberTokenHeader();
+
+			if(!empty($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
 			return $ch;
 		}
 
+		private function loadCurl(){
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			return $this->getHeaders($ch);
+		}
+
 		private function parseResponse($res, $callback = null, $encoded = false){
+			//pr('here');
+			//pr($res);
 
 			$res = new \Nectar\Core\NectarResponse($res);
 

@@ -17,4 +17,8 @@
 		public function invoices(){
 			return $this->relationship('invoices');
 		}
+
+		public function event(){
+			return $this->relationship('events');
+		}
 	}

@@ -38,13 +38,24 @@
 			return isset($this->_data[$position]);
 		}
 
+		public function data(){
+			return $this->_data;
+		}
+
 		public function push($data){		
 			
 			if(is_object($data) && isset($data->className)){
 
 				$class_name = '\Nectar\Model\\'.str_replace('Nectar', '', $data->className);
 
-				$data = new $class_name((array)$data->data);
+				if(class_exists($class_name)){
+					$data = new $class_name((array)$data->data);
+				}
+				else{
+					$data = (array)$data->data;
+				}
+
+				
 			}
 
 			$this->_data[] = $data;
@@ -66,4 +77,69 @@
 		public function nth($position){
 			return $this->_data[$position];
 		}
+
+		public function toArray(){
+			$res = [];
+			foreach($this->_data as $k => $v){
+				if(is_object($v) && method_exists($v, 'toArray')){
+					$res[$k] = $v->toArray();
+					continue;
+				}
+				
+				$res[$k] = $v;
+			}
+		}
+
+		public function toArrayDeep($full = true){
+			$res = [];
+
+			foreach($this->_data as $k => $v){
+				if(is_object($v)){
+					if(method_exists($v, 'toArrayDeep')){
+						$res[$k] = $v->toArrayDeep(true);
+					}
+					else{
+						$res[$k] = json_decode(json_encode($v), true);
+					}
+				}
+				else{
+					$res[$k] = $v;
+				}
+			}
+
+			return $res;
+		}
+
+		/*
+		public function toJson(){
+			
+			$res = [];
+
+			foreach($this->_data as $k => $v){
+				if(is_object($v)){
+					if(method_exists($v, 'toJson')){
+						$res[$k] = json_decode($v, true);
+					}
+					else{
+						$res[$k] = $v;
+					}
+				}
+				elseif(is_array($v)){
+					foreach($v as $x => $y){
+						if(is_object($y)){
+							if(method_exists($y, 'toJson')){
+								$res[$k][$x] = json_decode($y->toJson(), true);
+							}
+							else{
+								$res[$k][$x] = $y;
+							}
+						}
+						else{
+
+						}
+					}
+				}
+			}
+		}
+		*/
 	}

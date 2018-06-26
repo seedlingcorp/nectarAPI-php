@@ -15,4 +15,14 @@
 		public function organizations(){
 			return $this->relationship('organizations');
 		}
+
+		public function profilePictureUrl($thumb = false){
+
+			$data = $this->data();
+			if(isset($data->image)){
+				return $thumb ? $data->image->data()->thumbnail : $data->image->data()->fullUrl;
+			}
+
+			return '//placehold.it/40x40';
+		}
 	}

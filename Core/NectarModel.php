@@ -22,6 +22,58 @@
 			$this->_api_url = $this->apiUrl();
 		}
 
+		public function isModel(){
+			return true;
+		}
+
+		public function toArray(){
+			return $this->data();
+		}
+
+		public function toArrayDeep($full = false){
+			
+			//return json_decode(json_encode($this->_data), true);
+
+			$res = [];
+
+
+			$d = $full ? $this : $this->_data;
+			foreach($d as $k => $v){
+				if(is_object($v)){
+
+					if(method_exists($v, 'toArrayDeep')){
+						if($v->isModel() && $full){
+
+						}
+						//$res[$k] = get_class($v);
+						$res[$k] = $v->toArrayDeep(true);
+					}
+					else{
+						//$res[$k] = json_decode(json_encode($v), true);
+						$res[$k] = $v;
+					}
+				}
+				else{
+					$res[$k] = $v;
+				}
+			}
+
+			return $res;
+		}
+
+		/*
+		public function toJsonOld(){
+			
+			$res = [];
+
+			foreach($this->data() as $k => $v){
+				$res[$k] = is_object($v) && method_exists($v, 'toArray') ? $v->toArray() : $v;
+			}
+
+			return json_encode($res);
+		}
+		*/
+
 		//PARSE THE DATA AND LOAD MODELS AS NEEDED
 		private function parseSetData($data = []){
 			
@@ -31,8 +83,12 @@
 			//LOOP THROUGH THE DATA
 			foreach($data as $k => $v){
 
+				if(is_object($v) && isset($v->date) && isset($v->timezone_type) && isset($v->timezone)){
+					$v = new \DateTime($v->date);
+				}
+
 				//CHECK FOR OBJECT WITH CLASS NAME
-				if(is_object($v) && isset($v->className)){
+				elseif(is_object($v) && isset($v->className)){
 
 					//FIND THE CLASSNAME
 					$class_name = '\Nectar\Model\\'.str_replace('Nectar', '', $v->className);
@@ -77,9 +133,34 @@
 		//OBTAIN THE MODEL DATA
 		public function data(){
 
+			//return new \Nectar\Core\NectarModelData($this->_data);
+
 			//SEND BACK THE MODEL DATA
 			return (object)$this->_data;
 		}
+
+		/*
+		public function toJson(){
+
+			$res = [];
+
+			foreach($this as $k => $v){
+				if(is_string($v)){
+					$res[$k] = $v;
+				}
+				elseif(is_object($v)){
+					if(method_exists($v, 'isModel')){
+						if($v->isModel()){
+							$res[$k] = json_decode($v->toJson(), true);
+						}
+						elseif(get_class($v) === 'Nectar\Core\NectarCollection'){
+							$res[$k] = json_decode($v->toJson(), true);
+						}
+					}
+				}
+			}
+		}
+		*/
 
 		//HANDLE STATUS CHECKS TO SIMULATE API REQUESTS
 		public function status(){
